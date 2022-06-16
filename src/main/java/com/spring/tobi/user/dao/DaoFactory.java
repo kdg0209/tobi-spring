@@ -3,6 +3,8 @@ package com.spring.tobi.user.dao;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.sql.DataSource;
+
 @Configuration
 public class DaoFactory {
 
@@ -20,24 +22,12 @@ public class DaoFactory {
 
     @Bean
     public UserDao userDao() {
-        UserDao userDao = new UserDao(connectionMarker());
+        UserDao userDao = new UserDao();
         return userDao;
     }
 
     @Bean
-    public UserDao accountDao() {
-        UserDao userDao = new UserDao(connectionMarker());
-        return userDao;
-    }
+    public DataSource dataSource() {
 
-    @Bean
-    public UserDao messageDao() {
-        UserDao userDao = new UserDao(connectionMarker());
-        return userDao;
-    }
-
-    @Bean
-    public ConnectionMarker connectionMarker() {
-        return new DConnectionMarker();
     }
 }

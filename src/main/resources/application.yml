@@ -4,3 +4,5 @@ spring:
     url: jdbc:mysql://localhost:3306/tobi-spring?serverTimezone=Asia/Seoul
     username: root
     password:
+  main:
+    allow-bean-definition-overriding: true

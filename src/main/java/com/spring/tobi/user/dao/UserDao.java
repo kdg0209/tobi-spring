@@ -1,18 +1,16 @@
 package com.spring.tobi.user.dao;
 
 import com.spring.tobi.user.domain.User;
+
+import javax.sql.DataSource;
 import java.sql.*;
 
 public class UserDao {
 
-    private ConnectionMarker connectionMarker;
-
-    public UserDao(ConnectionMarker connectionMarker) {
-        this.connectionMarker = connectionMarker;
-    }
+    DataSource dataSource;
 
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection conn = connectionMarker.makeConnection();
+        Connection conn = this.dataSource.getConnection();
         PreparedStatement ps =  conn.prepareStatement("INSERT INTO users(id, name, password) VALUES (?, ?, ?)");
         ps.setString(1, user.getId());
         ps.setString(2, user.getName());
@@ -24,7 +22,7 @@ public class UserDao {
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        Connection conn = connectionMarker.makeConnection();
+        Connection conn = this.dataSource.getConnection();
         PreparedStatement ps =  conn.prepareStatement("SELECT * FROM users WHERE id = ?");
         ps.setString(1, id);
         ResultSet rs = ps.executeQuery();
@@ -40,5 +38,9 @@ public class UserDao {
         conn.close();
 
         return user;
+    }
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 }
