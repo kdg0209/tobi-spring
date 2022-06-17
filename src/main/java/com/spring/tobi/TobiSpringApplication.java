@@ -24,35 +24,8 @@ public class TobiSpringApplication {
 
     @PostConstruct
     public void jdbcTest() throws ClassNotFoundException, SQLException {
-//        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(DaoFactory.class);
-//        UserDao dao1 = applicationContext.getBean("userDao", UserDao.class);
-//        UserDao dao2 = applicationContext.getBean("userDao", UserDao.class);
-//        UserDao dao3 = applicationContext.getBean("accountDao", UserDao.class);
-//        UserDao dao4 = applicationContext.getBean("accountDao", UserDao.class);
 
-//        System.out.println("applicationContext call");
-//        System.out.println(dao1);
-//        System.out.println(dao2);
-//        System.out.println(dao3);
-//        System.out.println(dao4);
-
-        CountingConnectionMarker countingConnectionMarker = new CountingConnectionMarker(countingDaoFactory.connectionMarker());
-
-        System.out.println("daoFactory call");
-
-//        User user = new User();
-//        user.setId("kdg");
-//        user.setName("김동균");
-//        user.setPassword("12345");
-//        userDao.add(user);
-//        System.out.println("유저 등록 성공");
-//
-        User findUser1 = daoFactory.userDao().get("kdg");
-        User findUser2 = daoFactory.userDao().get("kdg");
-        User findUser3 = daoFactory.userDao().get("kdg");
-
-
-        System.out.println(countingConnectionMarker.getCount());
+        User findUser = daoFactory.userDao().get("kdg");
+        System.out.println(findUser.getName());
     }
-
 }
