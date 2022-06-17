@@ -1,5 +1,6 @@
 package com.spring.tobi.user.dao;
 
+import com.spring.tobi.user.context.JdbcContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -23,7 +24,6 @@ public class DaoFactory {
         dataSource.setUrl("jdbc:mysql://localhost:3306/tobi-spring?serverTimezone=Asia/Seoul");
         dataSource.setUsername("root");
         dataSource.setPassword("12345");
-
         return dataSource;
     }
 }
