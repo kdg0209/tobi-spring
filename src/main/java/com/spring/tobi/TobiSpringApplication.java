@@ -1,14 +1,13 @@
 package com.spring.tobi;
 
+import com.spring.tobi.calculator.Calculator;
 import com.spring.tobi.user.dao.*;
-import com.spring.tobi.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.sql.SQLException;
 
 @SpringBootApplication
@@ -23,9 +22,8 @@ public class TobiSpringApplication {
     }
 
     @PostConstruct
-    public void jdbcTest() throws ClassNotFoundException, SQLException {
+    public void jdbcTest() throws ClassNotFoundException, SQLException, IOException {
+        daoFactory.userDao().deleteAll();
 
-        User findUser = daoFactory.userDao().get("kdg");
-        System.out.println(findUser.getName());
     }
 }

@@ -1,6 +1,5 @@
 package com.spring.tobi.user.dao;
 
-import com.spring.tobi.user.context.JdbcContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;

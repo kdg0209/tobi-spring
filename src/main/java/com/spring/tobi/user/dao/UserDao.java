@@ -21,7 +21,16 @@ public class UserDao {
     }
 
     public void add(User user) throws ClassNotFoundException, SQLException {
-        jdbcContext.workWithStatementStrategy(new AddStatement(user));
+        jdbcContext.workWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection conn) throws SQLException {
+                PreparedStatement ps = conn.prepareStatement("INSERT INTO users(id, name, password) VALUES (?, ?, ?)");
+                ps.setString(1, user.getId());
+                ps.setString(2, user.getName());
+                ps.setString(3, user.getPassword());
+                return ps;
+            }
+        });
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
@@ -41,6 +50,7 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException{
-        jdbcContext.workWithStatementStrategy(new DeleteAllStatement());
+        jdbcContext.executeSql("delete from users");
     }
+
 }

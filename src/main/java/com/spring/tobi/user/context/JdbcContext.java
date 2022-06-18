@@ -43,7 +43,15 @@ public class JdbcContext {
     public PreparedStatement getPreparedStatement(StatementStrategy statementStrategy) throws SQLException{
         Connection conn = dataSource.getConnection();
         PreparedStatement ps = statementStrategy.makePreparedStatement(conn);
-
         return ps;
+    }
+
+    public void executeSql(final String sql) throws SQLException {
+        workWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection conn) throws SQLException {
+                return conn.prepareStatement(sql);
+            }
+        });
     }
 }
