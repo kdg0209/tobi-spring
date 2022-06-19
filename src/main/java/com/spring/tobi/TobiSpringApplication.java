@@ -2,6 +2,7 @@ package com.spring.tobi;
 
 import com.spring.tobi.calculator.Calculator;
 import com.spring.tobi.user.dao.*;
+import com.spring.tobi.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 @SpringBootApplication
 @RequiredArgsConstructor
@@ -23,7 +25,16 @@ public class TobiSpringApplication {
 
     @PostConstruct
     public void jdbcTest() throws ClassNotFoundException, SQLException, IOException {
-        daoFactory.userDao().deleteAll();
+        User user = new User();
+        user.setId("kdg 2");
+        user.setName("kdg is 2");
+        user.setPassword("12345");
+        daoFactory.userDao().add(user);
+        System.out.println(daoFactory.userDao().getCount());
+//        System.out.println(daoFactory.userDao().get("kdg"));
+        List<User> users = daoFactory.userDao().getAll();
+        users.forEach(i -> System.out.println(i.toString()));
+//        daoFactory.userDao().deleteAll();
 
     }
 }

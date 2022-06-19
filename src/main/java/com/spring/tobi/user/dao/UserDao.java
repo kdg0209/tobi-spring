@@ -1,56 +1,53 @@
 package com.spring.tobi.user.dao;
 
-import com.spring.tobi.user.context.JdbcContext;
 import com.spring.tobi.user.domain.User;
-import com.spring.tobi.user.strategyPattern.AddStatement;
-import com.spring.tobi.user.strategyPattern.DeleteAllStatement;
-import com.spring.tobi.user.strategyPattern.GetStatement;
-import com.spring.tobi.user.strategyPattern.StatementStrategy;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.List;
 
 public class UserDao {
 
-    private JdbcContext jdbcContext;
-    private DataSource dataSource;
+    private JdbcTemplate jdbcTemplate;
 
     public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-        this.jdbcContext = new JdbcContext(this.dataSource);
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     public void add(User user) throws ClassNotFoundException, SQLException {
-        jdbcContext.workWithStatementStrategy(new StatementStrategy() {
-            @Override
-            public PreparedStatement makePreparedStatement(Connection conn) throws SQLException {
-                PreparedStatement ps = conn.prepareStatement("INSERT INTO users(id, name, password) VALUES (?, ?, ?)");
-                ps.setString(1, user.getId());
-                ps.setString(2, user.getName());
-                ps.setString(3, user.getPassword());
-                return ps;
-            }
-        });
+        this.jdbcTemplate.update("INSERT INTO users(id, name, password) VALUES (?, ?, ?)",
+                                user.getId(),
+                                user.getName(),
+                                user.getPassword());
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        StatementStrategy statementStrategy = new GetStatement(id);
-        PreparedStatement ps = jdbcContext.getPreparedStatement(statementStrategy);
-        ResultSet rs = ps.executeQuery();
+        return this.jdbcTemplate.queryForObject("select * from users where id = ?",
+                                                    new Object[]{id}, this.userRowMapper);
+    }
 
-        rs.next();
-        User user = new User();
-        user.setId(rs.getString("id"));
-        user.setName(rs.getString("name"));
-        user.setPassword(rs.getString("password"));
-
-        rs.close();
-        ps.close();
-        return user;
+    public List<User> getAll() {
+        return this.jdbcTemplate.query("select * from users order by id", this.userRowMapper);
     }
 
     public void deleteAll() throws SQLException{
-        jdbcContext.executeSql("delete from users");
+        this.jdbcTemplate.update("delete from users");
     }
 
+    public int getCount() {
+        return this.jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
+    }
+
+    private RowMapper<User> userRowMapper = new RowMapper<User>() {
+        @Override
+        public User mapRow(ResultSet resultSet, int i) throws SQLException {
+            User user = new User();
+            user.setId(resultSet.getString("id"));
+            user.setName(resultSet.getString("name"));
+            user.setPassword(resultSet.getString("password"));
+            return user;
+        }
+    };
 }
