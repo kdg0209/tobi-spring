@@ -24,10 +24,10 @@ public class TobiSpringApplication {
     }
 
     @PostConstruct
-    public void jdbcTest() throws ClassNotFoundException, SQLException, IOException {
+    public void jdbcTest() {
         User user = new User();
-        user.setId("kdg 2");
-        user.setName("kdg is 2");
+        user.setId("kdg 3");
+        user.setName("kdg is 3");
         user.setPassword("12345");
         daoFactory.userDao().add(user);
         System.out.println(daoFactory.userDao().getCount());
