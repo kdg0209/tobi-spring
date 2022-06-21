@@ -4,8 +4,15 @@ import com.spring.tobi.user.dao.UserDao;
 import com.spring.tobi.user.domain.Level;
 import com.spring.tobi.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
 import java.util.List;
 
 @Service
@@ -14,14 +21,23 @@ public class UserService {
     public static final int MIN_LOGCOUNT_FOR_SILVER = 50;
     public static final int MIN_RECCOMEND_FOR_GOLD = 30;
     private final UserDao userDao;
+    private final PlatformTransactionManager transactionManager;
 
     public void upgradeLevels() {
-        List<User> users = userDao.getAll();
+        TransactionStatus status = this.transactionManager.getTransaction(new DefaultTransactionDefinition());
 
-        for(User user : users) {
-            if (canUpgradeLevel(user)) {
-                upgradeLevel(user);
+        try {
+            List<User> users = userDao.getAll();
+
+            for(User user : users) {
+                if (canUpgradeLevel(user)) {
+                    upgradeLevel(user);
+                }
             }
+            this.transactionManager.commit(status);
+        } catch (Exception e) {
+            this.transactionManager.rollback(status);
+            throw e;
         }
     }
 
@@ -35,7 +51,7 @@ public class UserService {
         }
     }
 
-    private void upgradeLevel(User user) {
+    protected void upgradeLevel(User user) {
         user.upgradeLevel();
         userDao.update(user);
     }

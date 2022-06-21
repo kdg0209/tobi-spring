@@ -67,6 +67,5 @@ public class TobiSpringApplication {
         daoFactory.userDao().add(user5); // GOLD로 승격
 
         userService.upgradeLevels();
-
     }
 }
