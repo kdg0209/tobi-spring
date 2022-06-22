@@ -28,6 +28,7 @@ public class TobiSpringApplication {
         user1.setLevel(Level.BASIC);
         user1.setLogin(10);
         user1.setRecommend(10);
+        user1.setEmail("s_cova_0418@naver.com");
         daoFactory.userDao().add(user1);
 
         User user2 = new User();
@@ -37,6 +38,7 @@ public class TobiSpringApplication {
         user2.setLevel(Level.BASIC);
         user2.setLogin(20);
         user2.setRecommend(20);
+        user2.setEmail("s_cova_0418@naver.com");
         daoFactory.userDao().add(user2);
 
         User user3 = new User();
@@ -46,6 +48,7 @@ public class TobiSpringApplication {
         user3.setLevel(Level.BASIC);
         user3.setLogin(30);
         user3.setRecommend(30);
+        user3.setEmail("s_cova_0418@naver.com");
         daoFactory.userDao().add(user3);
 
         User user4 = new User();
@@ -55,6 +58,7 @@ public class TobiSpringApplication {
         user4.setLevel(Level.BASIC);
         user4.setLogin(50);
         user4.setRecommend(40);
+        user4.setEmail("s_cova_0418@naver.com");
         daoFactory.userDao().add(user4); // SILVER로 승격
 
         User user5 = new User();
@@ -64,6 +68,7 @@ public class TobiSpringApplication {
         user5.setLevel(Level.SILVER);
         user5.setLogin(50);
         user5.setRecommend(50);
+        user5.setEmail("s_cova_0418@naver.com");
         daoFactory.userDao().add(user5); // GOLD로 승격
 
         userService.upgradeLevels();
