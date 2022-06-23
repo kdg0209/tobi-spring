@@ -1,6 +1,5 @@
 package com.spring.tobi;
 
-import com.spring.tobi.user.dao.*;
 import com.spring.tobi.user.domain.Level;
 import com.spring.tobi.user.domain.User;
 import com.spring.tobi.user.service.UserService;
@@ -13,7 +12,6 @@ import javax.annotation.PostConstruct;
 @SpringBootApplication
 @RequiredArgsConstructor
 public class TobiSpringApplication {
-    private final DaoFactory daoFactory;
     private final UserService userService;
     public static void main(String[] args) {
         SpringApplication.run(TobiSpringApplication.class, args);
@@ -29,7 +27,7 @@ public class TobiSpringApplication {
         user1.setLogin(10);
         user1.setRecommend(10);
         user1.setEmail("s_cova_0418@naver.com");
-        daoFactory.userDao().add(user1);
+        userService.add(user1);
 
         User user2 = new User();
         user2.setId("kdg2");
@@ -39,7 +37,7 @@ public class TobiSpringApplication {
         user2.setLogin(20);
         user2.setRecommend(20);
         user2.setEmail("s_cova_0418@naver.com");
-        daoFactory.userDao().add(user2);
+        userService.add(user2);
 
         User user3 = new User();
         user3.setId("kdg3");
@@ -49,7 +47,7 @@ public class TobiSpringApplication {
         user3.setLogin(30);
         user3.setRecommend(30);
         user3.setEmail("s_cova_0418@naver.com");
-        daoFactory.userDao().add(user3);
+        userService.add(user3);
 
         User user4 = new User();
         user4.setId("kdg4");
@@ -59,7 +57,7 @@ public class TobiSpringApplication {
         user4.setLogin(50);
         user4.setRecommend(40);
         user4.setEmail("s_cova_0418@naver.com");
-        daoFactory.userDao().add(user4); // SILVER로 승격
+        userService.add(user4); // SILVER로 승격
 
         User user5 = new User();
         user5.setId("kdg5");
@@ -69,7 +67,7 @@ public class TobiSpringApplication {
         user5.setLogin(50);
         user5.setRecommend(50);
         user5.setEmail("s_cova_0418@naver.com");
-        daoFactory.userDao().add(user5); // GOLD로 승격
+        userService.add(user5); // GOLD로 승격
 
         userService.upgradeLevels();
     }

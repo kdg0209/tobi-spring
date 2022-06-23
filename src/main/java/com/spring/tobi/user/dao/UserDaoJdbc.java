@@ -3,6 +3,7 @@ package com.spring.tobi.user.dao;
 import com.spring.tobi.exception.DuplicateUserIdException;
 import com.spring.tobi.user.domain.Level;
 import com.spring.tobi.user.domain.User;
+import lombok.Setter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -13,7 +14,6 @@ import java.util.List;
 
 public class UserDaoJdbc implements UserDao {
     private JdbcTemplate jdbcTemplate;
-
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
