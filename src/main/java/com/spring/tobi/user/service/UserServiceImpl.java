@@ -28,7 +28,6 @@ public class UserServiceImpl implements UserService{
     }
     @Override
     public void add(User user) {
-        System.out.println("UserServiceImpl add() Call");
         if (user.getLevel() == null) {
             user.setLevel(Level.BASIC);
         }

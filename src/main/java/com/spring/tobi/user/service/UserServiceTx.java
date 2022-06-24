@@ -13,7 +13,6 @@ public class UserServiceTx implements UserService {
 
     @Override
     public void add(User user) {
-        System.out.println("UserServiceTx add() Call");
         userService.add(user);
     }
 

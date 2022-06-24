@@ -41,7 +41,6 @@ public class AppConfig {
     }
 
     @Bean
-    @Primary
     public UserServiceTx userServiceTx(UserService userService, PlatformTransactionManager transactionManager) {
         UserServiceTx userServiceTx = new UserServiceTx();
         userServiceTx.setUserService(userService);
