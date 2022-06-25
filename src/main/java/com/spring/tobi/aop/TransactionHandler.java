@@ -11,7 +11,6 @@ import java.lang.reflect.Method;
 
 @Setter
 public class TransactionHandler implements InvocationHandler {
-
     private Object target;
     private PlatformTransactionManager transactionManager;
     private String pattern;

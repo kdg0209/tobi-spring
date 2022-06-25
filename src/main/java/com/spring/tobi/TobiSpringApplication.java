@@ -1,13 +1,23 @@
 package com.spring.tobi;
 
 import com.spring.tobi.aop.*;
+import com.spring.tobi.config.AppConfig;
+import com.spring.tobi.factoryBean.Message;
 import com.spring.tobi.user.domain.Level;
 import com.spring.tobi.user.domain.User;
 import com.spring.tobi.user.service.UserServiceImpl;
 import com.spring.tobi.user.service.UserServiceTx;
 import lombok.RequiredArgsConstructor;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.aop.support.NameMatchMethodPointcut;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.annotation.PostConstruct;
@@ -16,13 +26,17 @@ import java.lang.reflect.Proxy;
 @SpringBootApplication
 @RequiredArgsConstructor
 public class TobiSpringApplication {
-    private final UserServiceTx userService;
-    private final UserServiceImpl userServiceImpl;
-    private final UserServiceTx userServiceTx;
-    public static void main(String[] args) {
+//    private final UserServiceTx userService;
+//    private final UserServiceImpl userServiceImpl;
+//    private final UserServiceTx userServiceTx;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+    public static void main(String[] args) throws Exception {
         SpringApplication.run(TobiSpringApplication.class, args);
 
-        proxyCreate();
+        TobiSpringApplication example = new TobiSpringApplication();
+        example.pointcutAdvisor();
     }
     @PostConstruct
     public void jdbcTest() throws Exception {
@@ -87,12 +101,43 @@ public class TobiSpringApplication {
         System.out.println(hello.sayThankYou("KDG"));
     }
 
-    private static void proxyCreate() {
-        Hello helloProxy = (Hello) Proxy.newProxyInstance(
-                ClassLoader.getSystemClassLoader(),
-                new Class[] {Hello.class},
-                new UppercaseHandler(new HelloTarget()));
-        System.out.println(helloProxy);
-        System.out.println(helloProxy.sayHello("KDG"));
+    private void proxyCreate() {
+//        Hello helloProxy = (Hello) Proxy.newProxyInstance(
+//                ClassLoader.getSystemClassLoader(),
+//                new Class[] {Hello.class},
+//                new UppercaseHandler(new HelloTarget()));
+//        System.out.println(helloProxy);
+//        System.out.println(helloProxy.sayHello("KDG"));
+
+        ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
+        proxyFactoryBean.setTarget(new HelloTarget());
+        proxyFactoryBean.addAdvice(new UppercaseAdvice());
+
+        Hello proxiedHello = (Hello) proxyFactoryBean.getObject();
+        System.out.println(proxiedHello.sayHello("Toby").equals("HELLO TOBY"));
+        System.out.println(proxiedHello.sayHi("Toby").equals("HI TOBY"));
+        System.out.println(proxiedHello.sayThankYou("Toby").equals("THANK YOU TOBY"));
+    }
+
+    private void pointcutAdvisor() {
+        ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
+        proxyFactoryBean.setTarget(new HelloTarget());
+
+        NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
+        pointcut.setMappedName("sayH*");
+        proxyFactoryBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new UppercaseAdvice()));
+
+        Hello proxiedHello = (Hello) proxyFactoryBean.getObject();
+        System.out.println(proxiedHello.sayHello("Toby"));
+        System.out.println(proxiedHello.sayHi("Toby"));
+        System.out.println(proxiedHello.sayThankYou("Toby"));
+    }
+
+    static class UppercaseAdvice implements MethodInterceptor {
+        @Override
+        public Object invoke(MethodInvocation invocation) throws Throwable {
+            String ref = (String) invocation.proceed();
+            return ref.toUpperCase();
+        }
     }
 }
