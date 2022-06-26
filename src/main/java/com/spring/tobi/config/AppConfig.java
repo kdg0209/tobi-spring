@@ -1,5 +1,6 @@
 package com.spring.tobi.config;
 
+import com.spring.tobi.aop.NameMatchClassMethodPointcut;
 import com.spring.tobi.aop.TransactionAdvice;
 import com.spring.tobi.factoryBean.MessageFactoryBean;
 import com.spring.tobi.factoryBean.TxProxyFactoryBean;
@@ -8,7 +9,9 @@ import com.spring.tobi.user.dao.UserDaoJdbc;
 import com.spring.tobi.user.service.UserService;
 import com.spring.tobi.user.service.UserServiceImpl;
 import com.spring.tobi.user.service.UserServiceTx;
+import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.context.annotation.Bean;
@@ -66,22 +69,9 @@ public class AppConfig {
         return messageFactoryBean;
     }
 
-//    @Bean
-//    public TxProxyFactoryBean txProxyFactoryBean() {
-//        TxProxyFactoryBean txProxyFactoryBean = new TxProxyFactoryBean();
-//        txProxyFactoryBean.setTarget(userServiceImpl(userDao(), mailSender()));
-//        txProxyFactoryBean.setTransactionManager(platformTransactionManager());
-//        txProxyFactoryBean.setPattern("upgradeLevels");
-//        txProxyFactoryBean.setServiceInterface(UserService.class);
-//        return txProxyFactoryBean;
-//    }
-
     @Bean
-    public ProxyFactoryBean userService() {
-        ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
-        proxyFactoryBean.setTarget(transactionAdvice());
-        proxyFactoryBean.setInterceptorNames("transactionAdvisor");
-        return proxyFactoryBean;
+    public UserService userService() {
+        return userServiceImpl(userDao(), mailSender());
     }
     @Bean
     public TransactionAdvice transactionAdvice() {
@@ -90,18 +80,31 @@ public class AppConfig {
         return transactionAdvice;
     }
 
-    @Bean
-    public NameMatchMethodPointcut nameMatchMethodPointcut() {
-        NameMatchMethodPointcut nameMatchMethodPointcut = new NameMatchMethodPointcut();
-        nameMatchMethodPointcut.setMappedName("upgrade*");
-        return nameMatchMethodPointcut;
-    }
+//    @Bean
+//    public NameMatchClassMethodPointcut transactionPointcut() {
+//        NameMatchClassMethodPointcut pointcut = new NameMatchClassMethodPointcut();
+//        pointcut.setMappedClassName("*ServiceImpl");
+//        pointcut.setMappedName("upgrade*");
+//        return pointcut;
+//    }
 
     @Bean
     public DefaultPointcutAdvisor transactionAdvisor() {
         DefaultPointcutAdvisor defaultPointcutAdvisor = new DefaultPointcutAdvisor();
-        defaultPointcutAdvisor.setPointcut(nameMatchMethodPointcut());
+        defaultPointcutAdvisor.setPointcut(transactionPointcut());
         defaultPointcutAdvisor.setAdvice(transactionAdvice());
         return defaultPointcutAdvisor;
+    }
+
+    @Bean
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        return new DefaultAdvisorAutoProxyCreator();
+    }
+
+    @Bean
+    public AspectJExpressionPointcut transactionPointcut() {
+        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+        pointcut.setExpression("* *..*ServiceImpl.upgrade*(..)");
+        return pointcut;
     }
 }
