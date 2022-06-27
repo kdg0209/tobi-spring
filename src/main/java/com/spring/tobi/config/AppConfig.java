@@ -68,7 +68,6 @@ public class AppConfig {
         messageFactoryBean.setText("Factory Bean");
         return messageFactoryBean;
     }
-
     @Bean
     public UserService userService() {
         return userServiceImpl(userDao(), mailSender());
@@ -95,16 +94,14 @@ public class AppConfig {
         defaultPointcutAdvisor.setAdvice(transactionAdvice());
         return defaultPointcutAdvisor;
     }
-
     @Bean
     public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
         return new DefaultAdvisorAutoProxyCreator();
     }
-
     @Bean
     public AspectJExpressionPointcut transactionPointcut() {
         AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression("* *..*ServiceImpl.upgrade*(..)");
+        pointcut.setExpression("bean(*Service)");
         return pointcut;
     }
 }
