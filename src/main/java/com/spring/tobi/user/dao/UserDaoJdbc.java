@@ -3,6 +3,7 @@ package com.spring.tobi.user.dao;
 import com.spring.tobi.exception.DuplicateUserIdException;
 import com.spring.tobi.user.domain.Level;
 import com.spring.tobi.user.domain.User;
+import com.spring.tobi.user.mapper.SqlService;
 import lombok.Setter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -14,13 +15,19 @@ import java.util.List;
 
 public class UserDaoJdbc implements UserDao {
     private JdbcTemplate jdbcTemplate;
+    private SqlService sqlService;
+
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    public void setSqlService(SqlService sqlService) {
+        this.sqlService = sqlService;
+    }
     @Override
     public void add(User user) throws DuplicateUserIdException {
-        this.jdbcTemplate.update("INSERT INTO users(id, name, password, level, login, recommend, email) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        this.jdbcTemplate.update(
+                this.sqlService.getSql("userAdd"),
                 user.getId(),
                 user.getName(),
                 user.getPassword(),
@@ -29,32 +36,30 @@ public class UserDaoJdbc implements UserDao {
                 user.getRecommend(),
                 user.getEmail());
     }
-
     @Override
     public void update(User user) {
-        this.jdbcTemplate.update("UPDATE users SET name = ?, password = ?, level = ?, login = ?, recommend = ?, email = ? WHERE id = ?",
+        this.jdbcTemplate.update(this.sqlService.getSql("userUpdate"),
                                 user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getEmail(), user.getId());
     }
-
     @Override
     public User get(String id) {
-        return this.jdbcTemplate.queryForObject("select * from users where id = ?",
+        return this.jdbcTemplate.queryForObject(this.sqlService.getSql("userGet"),
                 new Object[]{id}, this.userRowMapper);
     }
 
     @Override
     public List<User> getAll() {
-        return this.jdbcTemplate.query("select * from users order by id", this.userRowMapper);
+        return this.jdbcTemplate.query(this.sqlService.getSql("userGetAll"), this.userRowMapper);
     }
 
     @Override
     public void deleteAll() {
-        this.jdbcTemplate.update("delete from users");
+        this.jdbcTemplate.update(this.sqlService.getSql("userDeleteAll"));
     }
 
     @Override
     public int getCount() {
-        return this.jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
+        return this.jdbcTemplate.queryForObject(this.sqlService.getSql("userGetCount"), Integer.class);
     }
 
     private RowMapper<User> userRowMapper = new RowMapper<User>() {

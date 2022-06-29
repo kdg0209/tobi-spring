@@ -3,6 +3,8 @@ package com.spring.tobi;
 import com.spring.tobi.aop.*;
 import com.spring.tobi.config.AppConfig;
 import com.spring.tobi.factoryBean.Message;
+import com.spring.tobi.user.dao.UserDao;
+import com.spring.tobi.user.dao.UserDaoJdbc;
 import com.spring.tobi.user.domain.Level;
 import com.spring.tobi.user.domain.User;
 import com.spring.tobi.user.service.UserServiceImpl;
@@ -30,26 +32,30 @@ public class TobiSpringApplication {
 //    private final UserServiceImpl userServiceImpl;
 //    private final UserServiceTx userServiceTx;
 
-    @Autowired
-    private ApplicationContext applicationContext;
+//    @Autowired
+//    private ApplicationContext applicationContext;
+
+    private final UserDao UserDao;
+
+
     public static void main(String[] args) throws Exception {
         SpringApplication.run(TobiSpringApplication.class, args);
 
-        TobiSpringApplication example = new TobiSpringApplication();
-        example.pointcutAdvisor();
+//        TobiSpringApplication example = new TobiSpringApplication();
+//        example.pointcutAdvisor();
     }
     @PostConstruct
     public void jdbcTest() throws Exception {
 
-//        User user1 = new User();
-//        user1.setId("kdg1");
-//        user1.setName("kdg");
-//        user1.setPassword("12345");
-//        user1.setLevel(Level.BASIC);
-//        user1.setLogin(10);
-//        user1.setRecommend(10);
-//        user1.setEmail("s_cova_0418@naver.com");
-//        userService.add(user1);
+        User user1 = new User();
+        user1.setId("kdg2");
+        user1.setName("kdg");
+        user1.setPassword("12345");
+        user1.setLevel(Level.BASIC);
+        user1.setLogin(10);
+        user1.setRecommend(10);
+        user1.setEmail("s_cova_0418@naver.com");
+        UserDao.add(user1);
 //
 //        User user2 = new User();
 //        user2.setId("kdg2");

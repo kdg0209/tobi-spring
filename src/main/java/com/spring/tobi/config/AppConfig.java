@@ -6,6 +6,7 @@ import com.spring.tobi.factoryBean.MessageFactoryBean;
 import com.spring.tobi.factoryBean.TxProxyFactoryBean;
 import com.spring.tobi.user.dao.UserDao;
 import com.spring.tobi.user.dao.UserDaoJdbc;
+import com.spring.tobi.user.mapper.SimpleSqlService;
 import com.spring.tobi.user.service.UserService;
 import com.spring.tobi.user.service.UserServiceImpl;
 import com.spring.tobi.user.service.UserServiceTx;
@@ -22,6 +23,8 @@ import org.springframework.mail.MailSender;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class AppConfig {
@@ -33,6 +36,7 @@ public class AppConfig {
     public UserDao userDao() {
         UserDaoJdbc userDaoJdbc = new UserDaoJdbc();
         userDaoJdbc.setDataSource(dataSource());
+        userDaoJdbc.setSqlService(sqlService());
         return userDaoJdbc;
     }
     @Bean
@@ -44,6 +48,20 @@ public class AppConfig {
         dataSource.setPassword("12345");
         return dataSource;
     }
+    @Bean
+    public SimpleSqlService sqlService() {
+        SimpleSqlService simpleSqlService = new SimpleSqlService();
+        Map sqlMap = new HashMap();
+        sqlMap.put("userAdd", "INSERT INTO users(id, name, password, level, login, recommend, email) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        sqlMap.put("userUpdate", "UPDATE users SET name = ?, password = ?, level = ?, login = ?, recommend = ?, email = ? WHERE id = ?");
+        sqlMap.put("userGet", "select * from users where id = ?");
+        sqlMap.put("userGetAll", "select * from users");
+        sqlMap.put("userDeleteAll", "delete from users");
+        sqlMap.put("userGetCount", "select count(*) from users");
+        simpleSqlService.setSqlMap(sqlMap);
+        return simpleSqlService;
+    }
+
     @Bean
     public UserServiceTx userServiceTx(UserService userService, PlatformTransactionManager transactionManager) {
         UserServiceTx userServiceTx = new UserServiceTx();
@@ -87,21 +105,21 @@ public class AppConfig {
 //        return pointcut;
 //    }
 
-    @Bean
-    public DefaultPointcutAdvisor transactionAdvisor() {
-        DefaultPointcutAdvisor defaultPointcutAdvisor = new DefaultPointcutAdvisor();
-        defaultPointcutAdvisor.setPointcut(transactionPointcut());
-        defaultPointcutAdvisor.setAdvice(transactionAdvice());
-        return defaultPointcutAdvisor;
-    }
-    @Bean
-    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-        return new DefaultAdvisorAutoProxyCreator();
-    }
-    @Bean
-    public AspectJExpressionPointcut transactionPointcut() {
-        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression("bean(*Service)");
-        return pointcut;
-    }
+//    @Bean
+//    public DefaultPointcutAdvisor transactionAdvisor() {
+//        DefaultPointcutAdvisor defaultPointcutAdvisor = new DefaultPointcutAdvisor();
+//        defaultPointcutAdvisor.setPointcut(transactionPointcut());
+//        defaultPointcutAdvisor.setAdvice(transactionAdvice());
+//        return defaultPointcutAdvisor;
+//    }
+//    @Bean
+//    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+//        return new DefaultAdvisorAutoProxyCreator();
+//    }
+//    @Bean
+//    public AspectJExpressionPointcut transactionPointcut() {
+//        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+//        pointcut.setExpression("bean(*Service)");
+//        return pointcut;
+//    }
 }
